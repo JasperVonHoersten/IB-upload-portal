@@ -173,14 +173,14 @@ export const Upsert = () => {
                   type="text"
                   name="aihub.workspace"
                   label="Workspace"
-                  placeholder="(Only for AIHub Commercial)"
+                  placeholder="My Workspace"
                 />
               </Col>
               <Col sm="12" md="6">
                 <Input
                   type="text"
                   name="aihub.driveName"
-                  label="Drine Name"
+                  label="Drive Name"
                   placeholder="Instabase Drive"
                 />
               </Col>

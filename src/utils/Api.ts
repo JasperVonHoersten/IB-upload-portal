@@ -6,11 +6,11 @@ export default class Api {
     [key: string]: (() => string) | ((arg1: string) => string) | ((
       arg1: string, arg2: string) => string)
   } = {
-      upload_file: (path: string) => `${this.profileManager.getApiRoot()}/v2/files/${path}`,
-      app_run_by_id: (appId: string) => `${this.profileManager.getApiRoot()}/v2/zero-shot-idp/projects/app/${appId}/run`,
-      app_run: () => `${this.profileManager.getApiRoot()}/v2/zero-shot-idp/projects/app/run`,
-      app_get_job_status: (jobId: string) => `${this.profileManager.getApiRoot()}/v1/jobs/status?job_id=${jobId}&type=flow`,
-      app_get_results: () => `${this.profileManager.getApiRoot()}/v1/flow_binary/results`,
+      upload_file: (path: string) => `${this.profileManager.getApiRoot()}/v2/batches`,
+      app_run_by_id: (appId: string) => `${this.profileManager.getApiRoot()}/v2/apps/runs`,
+      app_run: () => `${this.profileManager.getApiRoot()}/v2/apps/runs`,
+      app_get_job_status: (jobId: string) => `${this.profileManager.getApiRoot()}/v2/apps/runs`,
+      app_get_results: () => `${this.profileManager.getApiRoot()}/v2/apps/runs`,
       converse_get_conversations: () => `${this.profileManager.getApiRoot()}/v2/aihub/converse/conversations`,
       converse_post_conversations: () => `${this.profileManager.getApiRoot()}/v2/aihub/converse/conversations`,
       converse_get_conversation: (conversationId: string) => `${this.profileManager.getApiRoot()}/v2/aihub/converse/conversations/${conversationId}`,

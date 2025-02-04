@@ -45,7 +45,7 @@ export const newProfile: IProfile = {
     userId: '', // 'YOUR_USER_ID_HERE',
     organizationId: '', // 'YOUR_ORGANIZATION_ID_HERE (Only for AIHub Commercial)',
     context: '', // 'USER_ID or ORGANIZATION_ID (Only for AIHub Commercial)',
-    workspace: 'my-repo', // 'YOUR_WORKSPACE_HERE (Only for AIHub Commercial)',
+    workspace: 'My Workspace', // 'YOUR_WORKSPACE_HERE (Only for AIHub Commercial)',
     driveName: 'Instabase Drive',
     appId: '',
     appName: '',
