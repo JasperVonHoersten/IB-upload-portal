@@ -9,7 +9,7 @@ export default class Api {
       upload_file: () => `${this.profileManager.getApiRoot()}/v2/batches`,
       app_run_by_id: () => `${this.profileManager.getApiRoot()}/v2/apps/runs`,
       app_run: () => `${this.profileManager.getApiRoot()}/v2/apps/runs`,
-      app_get_job_status: (jobId: string) => `${this.profileManager.getApiRoot()}/v2/apps/runs`,
+      app_get_job_status: () => `${this.profileManager.getApiRoot()}/v2/apps/runs`,
       app_get_results: () => `${this.profileManager.getApiRoot()}/v2/apps/runs`,
       converse_get_conversations: () => `${this.profileManager.getApiRoot()}/v2/aihub/converse/conversations`,
       converse_post_conversations: () => `${this.profileManager.getApiRoot()}/v2/aihub/converse/conversations`,
