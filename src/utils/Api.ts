@@ -6,10 +6,10 @@ export default class Api {
     [key: string]: (() => string) | ((arg1: string) => string) | ((
       arg1: string, arg2: string) => string)
   } = {
-      upload_file: () => `${this.profileManager.getApiRoot()}/v2/batches`,
-      app_run_by_id: () => `${this.profileManager.getApiRoot()}/v2/apps/runs`,
+      upload_file: (path: string) => `${this.profileManager.getApiRoot()}/v2/batches`,
+      app_run_by_id: (appId: string) => `${this.profileManager.getApiRoot()}/v2/apps/runs`,
       app_run: () => `${this.profileManager.getApiRoot()}/v2/apps/runs`,
-      app_get_job_status: () => `${this.profileManager.getApiRoot()}/v2/apps/runs`,
+      app_get_job_status: (jobId: string) => `${this.profileManager.getApiRoot()}/v2/apps/runs`,
       app_get_results: () => `${this.profileManager.getApiRoot()}/v2/apps/runs`,
       converse_get_conversations: () => `${this.profileManager.getApiRoot()}/v2/aihub/converse/conversations`,
       converse_post_conversations: () => `${this.profileManager.getApiRoot()}/v2/aihub/converse/conversations`,
@@ -93,16 +93,48 @@ export default class Api {
   }
 
   // Domain specific API Call
-  public async uploadFile(file: File, folder: string = '') {
-    const {
-      organizationId,
-      workspace,
-      driveName,
-    } = this.profileManager.getDefault().aihub
-    const path = `${organizationId}/${workspace
-    ?? 'my-repo'}/fs/${driveName}/uploadPortal/${folder}/${file.name}`
+  public async createBatch(workspace: string) {
+    const myHeaders = {
+      'IB-Context': 'ib-internal',
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${await this.profileManager.getApiKey()}`, // Assuming you have a method to get the API key
+    };
 
-    return this.put('upload_file', (await readFileAsync(file)), path)
+    const body = JSON.stringify({
+      workspace: workspace,
+    });
+
+    try {
+      const response = await axios.post(`${this.profileManager.getApiRoot()}/v2/batches`, body, { headers: myHeaders });
+      return { isError: false, data: response.data };
+    } catch (error) {
+      return {
+        isError: true,
+        data: error.response && error.response.data ? error.response.data : error,
+        error,
+      };
+    }
+  }
+
+  public async uploadFile(batchId: string, file: File) {
+    const myHeaders = {
+      'IB-Context': 'ib-internal',
+      'Content-Type': 'application/octet-stream',
+      'Authorization': `Bearer ${await this.profileManager.getApiKey()}`, // Assuming you have a method to get the API key
+    };
+
+    const fileData = await readFileAsync(file); // Assuming readFileAsync is defined to read the file
+
+    try {
+      const response = await axios.put(`${this.profileManager.getApiRoot()}/v2/batches/${batchId}/files/${file.name}`, fileData, { headers: myHeaders });
+      return { isError: false, data: response.data };
+    } catch (error) {
+      return {
+        isError: true,
+        data: error.response && error.response.data ? error.response.data : error,
+        error,
+      };
+    }
   }
 
   public async appRun(folder: string) {
