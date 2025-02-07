@@ -93,14 +93,14 @@ export default class Api {
   }
 
   // Domain specific API Call.
-  public async upload_file(file: File, folder: string = '') {
+  public async upload_file(file: File, batchId: number) {
     const {
-      organizationId,
-      workspace,
-      driveName,
+        organizationId,
+        workspace,
+        driveName,
     } = this.profileManager.getDefault().aihub;
-    
-    const path = `${organizationId}/${workspace ?? 'my-repo'}/fs/${driveName}/uploadPortal/${folder}/${file.name}`;
+
+    const path = `${organizationId}/${workspace ?? 'my-repo'}/fs/${driveName}/uploadPortal/${file.name}`;
 
     return this.put('upload_file', (await readFileAsync(file)), batchId);
   }
