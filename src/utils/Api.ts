@@ -3,10 +3,11 @@ import { ProfileManager } from './ProfileManager'
 
 export default class Api {
   private endpoints: {
-    [key: string]: (() => string) | ((arg1: string) => string) | ((arg1: string, arg2: string) => string)
+    [key: string]: (() => string) | ((arg1: string) => string) | ((arg1: string, arg2: string) => string) | ((arg1: number) => string)
   } = {
       create_batch: () => `${this.profileManager.getApiRoot()}/v2/batches`,
       upload_file: (batchId: number) => `${this.profileManager.getApiRoot()}/v2/batches/${batchId}/files`,
+      app_run_by_id: (appId: string) => `${this.profileManager.getApiRoot()}/v2/apps/runs/${appId}`,
       app_run: () => `${this.profileManager.getApiRoot()}/v2/apps/runs`,
       app_get_job_status: (jobId: string) => `${this.profileManager.getApiRoot()}/v2/apps/runs/${jobId}`,
       app_get_results: () => `${this.profileManager.getApiRoot()}/v2/apps/runs`,
