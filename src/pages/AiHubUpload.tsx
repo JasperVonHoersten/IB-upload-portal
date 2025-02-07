@@ -37,6 +37,11 @@ export const AiHubUpload = () => {
     context.setStatus(
       { type: 'warning', message: 'Uploading files...' },
     )
+
+    // Create a batch first
+    const batchResponse = await api.createBatch('Your Batch Name')
+    const batchId = batchResponse.data.id
+
     for (const file of files || []) {
       // @ts-ignore
       file.statusColor = 'warning'
@@ -44,7 +49,7 @@ export const AiHubUpload = () => {
     }
 
     for (const file of files || []) {
-      const fileResult = await api.upload_file(file, folderName)
+      const fileResult = await api.upload_file(file, batchId)
       if (fileResult.isError) {
         // @ts-ignore
         file.statusColor = 'danger'

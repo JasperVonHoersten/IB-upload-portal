@@ -100,8 +100,6 @@ export default class Api {
         driveName,
     } = this.profileManager.getDefault().aihub;
 
-    const path = `${organizationId}/${workspace ?? 'my-repo'}/fs/${driveName}/uploadPortal/${file.name}`;
-
     return this.put('upload_file', (await readFileAsync(file)), batchId);
   }
 
