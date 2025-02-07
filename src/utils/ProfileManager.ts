@@ -80,4 +80,8 @@ export class ProfileManager {
       'IB-Context': this.getDefault().aihub.context,
     }
   }
+
+  getApiKey(): string {
+    return this.getDefault().aihub.apiKey;
+  }
 }

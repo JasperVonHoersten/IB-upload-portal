@@ -137,7 +137,7 @@ export default class Api {
     const myHeaders = {
       'IB-Context': 'ib-internal',
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${await this.profileManager.getApiKey()}`, // Assuming you have a method to get the API key
+      'Authorization': `Bearer ${await this.profileManager.getApiKey()}`,
     };
 
     const body = JSON.stringify({
@@ -147,7 +147,7 @@ export default class Api {
     try {
       const response = await axios.post(`${this.profileManager.getApiRoot()}/v2/batches`, body, { headers: myHeaders });
       return { isError: false, data: response.data };
-    } catch (error) {
+    } catch (error: any) {
       return {
         isError: true,
         data: error.response && error.response.data ? error.response.data : error,
