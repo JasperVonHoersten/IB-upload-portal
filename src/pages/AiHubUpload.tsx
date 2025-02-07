@@ -44,7 +44,7 @@ export const AiHubUpload = () => {
     }
 
     for (const file of files || []) {
-      const fileResult = await api.uploadFile(file, folderName)
+      const fileResult = await api.upload_file(file, folderName)
       if (fileResult.isError) {
         // @ts-ignore
         file.statusColor = 'danger'
