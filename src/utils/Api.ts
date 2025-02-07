@@ -6,7 +6,8 @@ export default class Api {
     [key: string]: (() => string) | ((arg1: string) => string) | ((
       arg1: string, arg2: string) => string)
   } = {
-      upload_file: () => `${this.profileManager.getApiRoot()}/v2/batches`,
+      create_batch: () => `${this.profileManager.getApiRoot()}/v2/batches`,
+      upload_file: (batchId: number) => `${this.profileManager.getApiRoot()}/v2/batches/${batchId}/files`,
       app_run_by_id: (appId: string) => `${this.profileManager.getApiRoot()}/v2/apps/runs/${appId}`,
       app_run: () => `${this.profileManager.getApiRoot()}/v2/apps/runs`,
       app_get_job_status: (jobId: string) => `${this.profileManager.getApiRoot()}/v2/apps/runs/${jobId}`,
@@ -92,17 +93,38 @@ export default class Api {
     }))
   }
 
-  // Domain specific API Call
-  public async uploadFile(file: File, folder: string = '') {
+  // Domain specific API Call.
+  public async upload_file(file: File, folder: string = '') {
     const {
       organizationId,
       workspace,
       driveName,
-    } = this.profileManager.getDefault().aihub
-    const path = `${organizationId}/${workspace
-    ?? 'my-repo'}/fs/${driveName}/uploadPortal/${folder}/${file.name}`
+    } = this.profileManager.getDefault().aihub;
+    
+    const path = `${organizationId}/${workspace ?? 'my-repo'}/fs/${driveName}/uploadPortal/${folder}/${file.name}`;
 
-    return this.put('upload_file', (await readFileAsync(file)), path)
+    return this.put('upload_file', (await readFileAsync(file)), path);
+  }
+
+  // Function to create a batch
+  public async createBatch(batchName: string) {
+    const response = await fetch(this.endpoints.create_batch(), {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${await this.profileManager.getApiKey()}`,
+            'IB-Context': this.profileManager.getIbContext(),
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ name: batchName })
+    });
+
+    if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(`Error creating batch: ${errorData.message || 'Unknown error'}`);
+    }
+
+    const data = await response.json();
+    return { isError: false, data };
   }
 
   public async appRun(folder: string) {
@@ -133,27 +155,26 @@ export default class Api {
     return this.post('app_run', { input_dir: inputDir, name: appName })
   }
 
-  public async createBatch(workspace: string) {
+  public async add_file_to_batch(batchId: number, file: File) {
     const myHeaders = {
-      'IB-Context': 'ib-internal',
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${await this.profileManager.getApiKey()}`,
+        'Authorization': `Bearer ${await this.profileManager.getApiKey()}`,
+        'IB-Context': this.profileManager.getIbContext(),
+        'Content-Type': 'application/octet-stream' // Assuming you're uploading binary files
     };
 
-    const body = JSON.stringify({
-      workspace: workspace,
+    const response = await fetch(`${this.endpoints.upload_file(batchId)}/${file.name}`, {
+        method: 'PUT', // Use PUT to upload files
+        headers: myHeaders,
+        body: file // Directly send the file as the body
     });
 
-    try {
-      const response = await axios.post(`${this.profileManager.getApiRoot()}/v2/batches`, body, { headers: myHeaders });
-      return { isError: false, data: response.data };
-    } catch (error: any) {
-      return {
-        isError: true,
-        data: error.response && error.response.data ? error.response.data : error,
-        error,
-      };
+    if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(`Error uploading file: ${errorData.message || 'Unknown error'}`);
     }
+
+    const data = await response.json();
+    return { isError: false, data };
   }
 }
 
